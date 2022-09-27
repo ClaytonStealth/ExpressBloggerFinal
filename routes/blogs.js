@@ -32,6 +32,7 @@ router.get('/get-one-example', async function (req, res, next) {
 router.get('/get-one/:id', async function (req, res, next) {
     try {
         const blogId = req.params.id
+
         const blogPost = await db().collection("posts").findOne({
             id: blogId
         })
