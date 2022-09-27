@@ -67,12 +67,51 @@ router.post('/create-one', async function (req, res, next) {
             email,
             categories,
             starRating,
+            id: id,
             createdAt: new Date(),
-            lastModified: new Date(),
-            id: id
+            lastModified: new Date()
+
         }
-        const blogPost = await db().collection("posts").insert({
-            blogData
+        const blogPost = await db().collection("posts").insert(blogData)
+        res.json({
+            success: true,
+            post: blogPost
+        })
+    } catch (err) {
+        //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
+        console.log(err.name)
+        res.json({
+            success: false,
+            error: err.toString()
+        })
+    }
+});
+
+router.put('/update-one', async function (req, res, next) {
+    try {
+        const title = req.body.title
+        const text = req.body.text
+        const author = req.body.author
+        const email = req.body.email
+        const categories = req.body.categories
+        const starRating = req.body.starRating
+        const lastModified = new Date()
+        // blogData = {
+        //     title,
+        //     text,
+        //     author,
+        //     email,
+        //     categories,
+        //     starRating,
+        //     lastModified: new Date()
+        // }
+        const blogPost = await db().collection("posts").update({
+            id: "b62a2ddd-5cc4-4980-b169-3e9af2580401"
+        }, {
+            $set: {
+                "starRating": starRating,
+                "lastModified": lastModified
+            }
         })
         res.json({
             success: true,
