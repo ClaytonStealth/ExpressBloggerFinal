@@ -1,4 +1,4 @@
-const validateBlogData = (blogInfo) => {
+const validateBlogInfo = (blogInfo) => {
 
 
 
@@ -68,11 +68,7 @@ const validateBlogData = (blogInfo) => {
     }
 
     const validCategories = [
-        "Lorem",
-        "ipsum",
-        "dolor",
-        "sit",
-        "amet"
+
     ]
 
     let isArrayValid = true
@@ -99,5 +95,5 @@ const validateBlogData = (blogInfo) => {
 
 
 module.exports = {
-    validateBlogData
+    validateBlogInfo
 }

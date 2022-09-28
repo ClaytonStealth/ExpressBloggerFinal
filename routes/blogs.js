@@ -7,8 +7,11 @@ var router = express.Router();
 const {
     db
 } = require("../mongo")
+var {
+    validateBlogInfo
+} = require("../validation/blogs")
 
-router.get('/get-one-example', async function (req, res, next) {
+router.get('/get-one-example', async (req, res, next) => {
     try {
         const blogPost = await db().collection("posts").findOne({
             id: {
@@ -29,7 +32,7 @@ router.get('/get-one-example', async function (req, res, next) {
     }
 });
 
-router.get('/get-one/:id', async function (req, res, next) {
+router.get('/get-one/:id', async (req, res, next) => {
     try {
         const blogId = req.params.id
 
@@ -50,7 +53,7 @@ router.get('/get-one/:id', async function (req, res, next) {
     }
 });
 
-router.post('/create-one', async function (req, res, next) {
+router.post('/create-one', async (req, res, next) => {
     try {
         const title = req.body.title
         const text = req.body.text
@@ -87,8 +90,9 @@ router.post('/create-one', async function (req, res, next) {
     }
 });
 
-router.put('/update-one', async function (req, res, next) {
+router.put('/update-one/:id', async (req, res, next) => {
     try {
+        const blogId = req.params.id
         const title = req.body.title
         const text = req.body.text
         const author = req.body.author
@@ -106,7 +110,7 @@ router.put('/update-one', async function (req, res, next) {
         //     lastModified: new Date()
         // }
         const blogPost = await db().collection("posts").update({
-            id: "b62a2ddd-5cc4-4980-b169-3e9af2580401"
+            id: blogId
         }, {
             $set: {
                 "starRating": starRating,
@@ -116,6 +120,26 @@ router.put('/update-one', async function (req, res, next) {
         res.json({
             success: true,
             post: blogPost
+        })
+    } catch (err) {
+        //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
+        console.log(err.name)
+        res.json({
+            success: false,
+            error: err.toString()
+        })
+    }
+});
+
+router.delete('/delete-one/:id', async (req, res, next) => {
+    try {
+        const blogId = req.params.id
+
+        const blogPost = await db().collection("posts").deleteOne({
+            id: blogId
+        })
+        res.json({
+            success: true,
         })
     } catch (err) {
         //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
