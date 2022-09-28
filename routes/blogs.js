@@ -24,7 +24,7 @@ router.get('/get-one-example', async (req, res, next) => {
         })
     } catch (err) {
         //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
-        console.log(err.name)
+        console.log(err)
         res.json({
             success: false,
             error: err.toString()
@@ -35,7 +35,6 @@ router.get('/get-one-example', async (req, res, next) => {
 router.get('/get-one/:id', async (req, res, next) => {
     try {
         const blogId = req.params.id
-
         const blogPost = await db().collection("posts").findOne({
             id: blogId
         })
@@ -45,7 +44,7 @@ router.get('/get-one/:id', async (req, res, next) => {
         })
     } catch (err) {
         //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
-        console.log(err.name)
+        console.log(err)
         res.json({
             success: false,
             error: err.toString()
@@ -63,7 +62,8 @@ router.post('/create-one', async (req, res, next) => {
         const starRating = req.body.starRating
         const id = uuid()
 
-        blogData = {
+
+        blogInfo = {
             title,
             text,
             author,
@@ -73,16 +73,24 @@ router.post('/create-one', async (req, res, next) => {
             id: id,
             createdAt: new Date(),
             lastModified: new Date()
-
         }
-        const blogPost = await db().collection("posts").insert(blogData)
+        const blogInfoCheck = validateBlogInfo(blogInfo)
+        if (blogInfoCheck.isValid === false) {
+            res.json({
+                success: false,
+                message: blogInfoCheck.message
+            })
+            return;
+        }
+
+        const blogPost = await db().collection("posts").insertOne(blogInfo)
         res.json({
             success: true,
             post: blogPost
         })
     } catch (err) {
         //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
-        console.log(err.name)
+        console.log(err)
         res.json({
             success: false,
             error: err.toString()
@@ -100,15 +108,15 @@ router.put('/update-one/:id', async (req, res, next) => {
         const categories = req.body.categories
         const starRating = req.body.starRating
         const lastModified = new Date()
-        // blogData = {
-        //     title,
-        //     text,
-        //     author,
-        //     email,
-        //     categories,
-        //     starRating,
-        //     lastModified: new Date()
-        // }
+        blogInfo = {
+            title,
+            text,
+            author,
+            email,
+            categories,
+            starRating,
+            lastModified: new Date()
+        }
         const blogPost = await db().collection("posts").update({
             id: blogId
         }, {
@@ -123,7 +131,7 @@ router.put('/update-one/:id', async (req, res, next) => {
         })
     } catch (err) {
         //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
-        console.log(err.name)
+        console.log(err)
         res.json({
             success: false,
             error: err.toString()
@@ -139,11 +147,11 @@ router.delete('/delete-one/:id', async (req, res, next) => {
             id: blogId
         })
         res.json({
-            success: true,
+            success: true
         })
     } catch (err) {
         //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
-        console.log(err.name)
+        console.log(err)
         res.json({
             success: false,
             error: err.toString()

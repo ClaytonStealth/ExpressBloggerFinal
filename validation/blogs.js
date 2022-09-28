@@ -1,7 +1,7 @@
 const validateBlogInfo = (blogInfo) => {
 
 
-
+    //checking the title to see if undefined || a string || less than 30 characters in length
     if (blogInfo.title === undefined || typeof (blogInfo.title) !== "string" || blogInfo.title.length > 30) {
 
         return {
@@ -16,76 +16,74 @@ const validateBlogInfo = (blogInfo) => {
 
         return {
             isValid: false,
-            message: "text is required and must be a string and be less than 40 characters"
+            message: "text is required and must be a string"
         }
     }
+    if (blogInfo.email !== undefined) {
+        if (typeof (blogInfo.email) !== "string") {
+            return {
+                isValid: false,
+                message: "Email must be a string"
+            }
+        }
+        if (blogInfo.email.includes("@") === false) {
+            return {
+                isValid: false,
+                message: "email must contain @ to be valid"
+
+            }
+        }
+    }
+    //seeing inf blogInfo.email includes @ if thats false. return false
+
 
     if (blogInfo.author === undefined || typeof (blogInfo.author) !== "string") {
 
 
         return {
             isValid: false,
-            message: "author is required and must be a string and be less than 40 characters"
+            message: "author is required and must be a string"
         }
     }
+    if (blogInfo.starRating !== undefined) {
+        if (blogInfo.starRating < 1 || blogInfo.starRating > 10) {
+            return {
+                isValid: false,
+                message: "starRating must be between 1 and 10"
+            }
+        }
+    }
+    //checking bloginfo categories if undefined|| is not an array||length is less than 1 (0)
+    // console.log(blogInfo.categories === undefined)
+    // console.log(Array.isArray(blogInfo.categories) === false)
 
-    if (
-        blogInfo.category === undefined ||
-        Array.isArray(blogInfo.category) === false ||
-        blogInfo.category.length < 1
-    ) {
+    if (blogInfo.categories === undefined ||
+        Array.isArray(blogInfo.categories) === false ||
+        blogInfo.categories.length < 1) {
         return {
             isValid: false,
             message: "Category must exist, must be an array, and must have items within it"
         }
     }
-
-    if (blogInfo.category.length > 10) {
-        return {
-            isValid: false,
-            message: "Category cannot have more than 10 items"
-        }
-    }
-
-    const nonStringCategory = blogInfo.category.filter((category) => {
-
-
-        if (typeof (category) !== 'string') {
+    //filtering categories to look for strings. and putting it into nonStringCategories
+    const nonStringCategories = blogInfo.categories.filter((categories) => {
+        if (typeof (categories) !== 'string') {
 
             return true
+
         } else {
 
             return false
         }
     })
 
-
-    if (nonStringCategory.length > 0) {
+    if (nonStringCategories.length > 0) {
         return {
             isValid: false,
             message: "categories must be strings ONLY"
         }
     }
 
-    const validCategories = [
-
-    ]
-
-    let isArrayValid = true
-
-    blogInfo.category.forEach((blogCategory) => {
-        if (validCategories.includes(blogCategory) === false) {
-            isArrayValid = false;
-        }
-    })
-
-    if (isArrayValid === false) {
-        return {
-            isValid: false,
-            message: "items in category must be one of the following: Lorem,ipsum,dolor,sit,amet"
-
-        }
-    }
 
     return {
         isValid: true
