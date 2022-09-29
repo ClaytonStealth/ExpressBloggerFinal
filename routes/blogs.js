@@ -108,26 +108,62 @@ router.put('/update-one/:id', async (req, res, next) => {
         const categories = req.body.categories
         const starRating = req.body.starRating
         const lastModified = new Date()
-        blogInfo = {
-            title,
-            text,
-            author,
-            email,
-            categories,
-            starRating,
+        const blogInfo = {
+            // title,
+            // text,
+            // author,
+            // email,
+            // categories,
+            // starRating,
             lastModified: new Date()
         }
+        if (starRating !== undefined) {
+            if (starRating >= 1 && starRating <= 10) {
+                blogInfo.starRating = starRating
+            }
+        }
+        if (email !== undefined) {
+            if (email.includes("@") === true) {
+                blogInfo.email = email
+            }
+        }
+        if (title !== undefined) {
+            if (typeof (title) === "string" && title.length < 30) {
+                blogInfo.title = title
+            }
+        }
+        if (text !== undefined) {
+            if (typeof (text) === "string") {
+                blogInfo.text = text
+            }
+        }
+        if (author !== undefined) {
+            if (typeof (author) === "string") {
+                blogInfo.author = author
+            }
+        }
+        if (categories !== undefined && Array.isArray(categories) === true && categories.length > 0) {
+            const invalidCat = categories.filter((category) => {
+                if (typeof (category) !== "string") {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+            if (invalidCat.length === 0) {
+                blogInfo.categories = categories
+            }
+
+        }
+
         const blogPost = await db().collection("posts").update({
             id: blogId
         }, {
-            $set: {
-                "starRating": starRating,
-                "lastModified": lastModified
-            }
+            $set: blogInfo
         })
         res.json({
             success: true,
-            post: blogPost
+            updateFields: blogInfo
         })
     } catch (err) {
         //In the catch block, we always want to do 2 things: console.log the error and respond with an error object
